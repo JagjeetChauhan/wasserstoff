@@ -139,3 +139,41 @@ After processing, the script calculates statistics on processed PDFs (total file
 
 ### **Directory Path**
 - Update the pdf_dir in the script to point to your own folder containing PDFs.
+
+## Solution Explanation
+- The PDF Processing Pipeline is designed to automate the extraction of valuable information from PDF documents, enabling users to efficiently process, summarize, and analyze large volumes of files. This solution integrates several key functionalities, utilizing various libraries and technologies to achieve its goals. Below is a detailed explanation of how the pipeline operates:
+
+### **PDF Ingestion**
+- The pipeline begins by listing all the PDF files in a specified directory. This is done using the list_pdfs() function, which checks the folder for files ending with the .pdf extension.
+
+### **Text Extraction**
+- Each PDF file is then processed through the parse_pdf() function. This function utilizes the PyPDF2 library to read the PDF and extract its text content. It opens each file, reads its pages, and compiles the extracted text into a single string. If any errors occur during this process, they are logged for review, ensuring that no critical information is lost.
+
+### **Data Storage in MongoDB**
+- Once the text has been successfully extracted, the metadata of the PDF, including its filename, path, file size, extracted content, summary, and keywords, is stored in a MongoDB database using the store_pdf_metadata() function. This allows for easy retrieval and querying of the processed documents in the future.
+
+### **Summarization and Keyword Extraction**
+- The core of the solution involves summarizing the extracted text and identifying key terms:
+
+### **Summarization** 
+- The summarize_text() function employs the TF-IDF (Term Frequency-Inverse Document Frequency) algorithm to analyze the text and extract the most important sentences. This algorithm evaluates the relevance of sentences based on their term frequency in relation to the entire document set. The top-ranked sentences are then combined to create a concise summary of the document.
+- Keyword Extraction: Similarly, the extract_keywords() function also utilizes TF-IDF to identify significant keywords within the text. It tokenizes the text, removes stopwords (common words that carry little meaning), and ranks the remaining words based on their TF-IDF score to determine the most relevant keywords.
+
+### **Error Handling and Reporting**
+- The pipeline includes robust error handling features. Any issues encountered during the processing of PDFs—such as empty documents or parsing errors—are logged to a dedicated pdf_pipeline.log file. After processing all the PDFs, the generate_report() function compiles a summary report detailing:
+
+### **Total PDFs processed**
+- Total PDFs that failed processing
+- Total size of processed files
+- Average file size
+
+### **Concurrency and Performance Optimization**
+- To enhance performance, the pipeline leverages Python’s multiprocessing library, allowing it to process multiple PDF files concurrently. This significantly reduces the overall processing time, especially when dealing with large datasets.
+
+### **MongoDB Querying**
+- After the processing is complete, users can query the MongoDB database to retrieve stored documents. The display_mongo_summary() function provides insights into the number of documents stored and their average file size, ensuring users can easily access and analyze the processed data.
+
+## Conclusion
+- In summary, the PDF Processing Pipeline streamlines the workflow of extracting and analyzing information from PDF documents, making it a powerful tool for researchers, data analysts, and anyone needing to handle large volumes of text data efficiently. With its emphasis on automation, error handling, and robust reporting, this solution provides a comprehensive approach to document processing.
+
+
